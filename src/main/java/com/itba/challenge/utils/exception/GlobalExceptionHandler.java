@@ -7,11 +7,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
@@ -47,5 +51,25 @@ public class GlobalExceptionHandler {
 
         log.error("{}: {}", e.getUserMessage(), e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidationExceptions(HttpServletRequest req, MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+
+        ApiError apiError = ApiError.builder()
+                .message("Error de validación en los datos enviados.")
+                .backendMessage("Validation failed for one or more fields.")
+                .url(req.getRequestURL().toString())
+                .date(LocalDateTime.now())
+                .method(req.getMethod())
+                .validationErrors(errors)  // ➔ necesitas agregar este campo al modelo ApiError
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 }

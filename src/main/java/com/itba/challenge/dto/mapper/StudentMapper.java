@@ -1,18 +1,18 @@
 package com.itba.challenge.dto.mapper;
 
+import com.itba.challenge.controller.request.StudentCreateRequest;
+import com.itba.challenge.controller.request.StudentUpdateRequest;
 import com.itba.challenge.controller.response.StudentResponse;
-import com.itba.challenge.dto.StudentDTO;
 import com.itba.challenge.model.entity.Student;
-import org.mapstruct.Builder;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface StudentMapper {
 
-    StudentDTO toDto(Student student);
-    Student toEntity(StudentDTO studentDTO);
+    Student toEntity(StudentCreateRequest studentDTO);
     @Mapping(target = "fullName", expression = "java(student.getName() + \" \" + student.getLastname())")
     StudentResponse toResponse(Student student);
+    @Mapping(target = "id", ignore = true)
+    void updateStudentFromRequest(StudentUpdateRequest request, @MappingTarget Student student);
 
 }

@@ -1,7 +1,8 @@
 package com.itba.challenge.service.impl;
 
+import com.itba.challenge.controller.request.StudentCreateRequest;
+import com.itba.challenge.controller.request.StudentUpdateRequest;
 import com.itba.challenge.controller.response.StudentResponse;
-import com.itba.challenge.dto.StudentDTO;
 import com.itba.challenge.dto.mapper.StudentMapper;
 import com.itba.challenge.model.entity.Student;
 import com.itba.challenge.model.enums.AuditLogAction;
@@ -24,20 +25,17 @@ public class StudentServiceImpl implements StudentService {
     private final StudentAuditLogService studentAuditLogService;
 
     @Override
-    public StudentResponse createStudent(final StudentDTO studentDTO) {
-        Student studentEntity = studentRepository.save(studentMapper.toEntity(studentDTO));
+    public StudentResponse createStudent(final StudentCreateRequest request) {
+        Student studentEntity = studentRepository.save(studentMapper.toEntity(request));
         studentAuditLogService.saveAuditLog(studentEntity.getId(), AuditLogAction.CREATE.getAction());
         return studentMapper.toResponse(studentEntity);
     }
 
     @Override
-    public StudentResponse updateStudent(final Long id, final StudentDTO studentDTO) throws StudentNotFoundException {
+    public StudentResponse updateStudent(final Long id, final StudentUpdateRequest request) throws StudentNotFoundException {
         Student studentEntity = studentRepository.findById(id)
                 .orElseThrow(() -> this.buildNotFoundException(id));
-        studentEntity.setName(studentDTO.name());
-        studentEntity.setLastname(studentDTO.lastname());
-        studentEntity.setEmail(studentDTO.email());
-        studentEntity.setAddress(studentDTO.address());
+        studentMapper.updateStudentFromRequest(request, studentEntity);
         studentAuditLogService.saveAuditLog(studentEntity.getId(), AuditLogAction.UPDATE.getAction());
         return studentMapper.toResponse(studentRepository.save(studentEntity));
     }

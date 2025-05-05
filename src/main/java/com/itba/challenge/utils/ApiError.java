@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Builder
 public record ApiError(String backendMessage,
@@ -11,5 +12,6 @@ public record ApiError(String backendMessage,
                        LocalDateTime date,
                        String url,
                        String method,
-                       String message) {
+                       String message,
+                       Map<String, String> validationErrors) {
 }

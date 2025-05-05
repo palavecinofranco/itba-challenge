@@ -1,10 +1,11 @@
 package com.itba.challenge.controller;
 
+import com.itba.challenge.controller.request.StudentCreateRequest;
+import com.itba.challenge.controller.request.StudentUpdateRequest;
 import com.itba.challenge.controller.response.StudentResponse;
-import com.itba.challenge.dto.StudentDTO;
 import com.itba.challenge.service.StudentService;
 import com.itba.challenge.utils.exception.StudentNotFoundException;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,8 @@ public class StudentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<StudentResponse> createStudent(@RequestBody final StudentDTO studentDTO) {
-        return new ResponseEntity<>(studentService.createStudent(studentDTO), HttpStatus.CREATED);
+    public ResponseEntity<StudentResponse> createStudent(@RequestBody @Valid final StudentCreateRequest request) {
+        return new ResponseEntity<>(studentService.createStudent(request), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -40,8 +41,8 @@ public class StudentController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<StudentResponse> updateStudent(@PathVariable final Long id, @RequestBody final StudentDTO studentDTO) throws StudentNotFoundException {
-        return ResponseEntity.ok(studentService.updateStudent(id, studentDTO));
+    public ResponseEntity<StudentResponse> updateStudent(@PathVariable final Long id, @RequestBody final StudentUpdateRequest request) throws StudentNotFoundException {
+        return ResponseEntity.ok(studentService.updateStudent(id, request));
     }
 
 
