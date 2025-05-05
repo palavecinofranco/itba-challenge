@@ -1,7 +1,7 @@
 package com.itba.challenge.utils.exception;
 
-public class StudentNotFoundException extends Exception {
-    public StudentNotFoundException(String message) {
-        super(message);
+public class StudentNotFoundException extends NotFoundException {
+    public StudentNotFoundException(String userMessage, String backendMessage) {
+        super(userMessage, backendMessage);
     }
 }

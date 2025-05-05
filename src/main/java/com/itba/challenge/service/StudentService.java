@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface StudentService {
     StudentResponse createStudent(StudentDTO studentDTO);
-    StudentResponse updateStudent(StudentDTO studentDTO) throws StudentNotFoundException;
+    StudentResponse updateStudent(Long id, StudentDTO studentDTO) throws StudentNotFoundException;
     void deleteStudent(Long id) throws StudentNotFoundException;
     StudentResponse getStudentById(Long id) throws StudentNotFoundException;
     List<StudentResponse> getAllStudents();

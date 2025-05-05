@@ -1,4 +1,4 @@
-package com.itba.challenge.entity;
+package com.itba.challenge.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,20 +16,11 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
+    private String dni;
     private String name;
-
-    @Column(nullable = false)
     private String lastname;
-
-    @Column
-    private LocalDate dateOfBirth;
-
-    @Column
     private String email;
-
-    @Column
     private String address;
 
 }

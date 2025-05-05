@@ -4,8 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record StudentResponse(
-    String name,
-    String lastname,
+    String fullName,
+    String dni,
     String email,
     String address
 ) {

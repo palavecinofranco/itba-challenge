@@ -34,4 +34,18 @@ public class GlobalExceptionHandler {
         log.error("{}: {}", message, e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleNotFoundException(HttpServletRequest req, NotFoundException e) {
+        ApiError apiError = ApiError.builder()
+                .backendMessage(e.getMessage())
+                .message(e.getUserMessage())
+                .url(req.getRequestURL().toString())
+                .date(LocalDateTime.now())
+                .method(req.getMethod())
+                .build();
+
+        log.error("{}: {}", e.getUserMessage(), e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
+    }
 }

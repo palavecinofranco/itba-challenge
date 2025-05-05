@@ -24,24 +24,24 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StudentResponse> getById(@PathVariable Long id) throws StudentNotFoundException {
+    public ResponseEntity<StudentResponse> getStudentById(@PathVariable final Long id) throws StudentNotFoundException {
         return ResponseEntity.ok(studentService.getStudentById(id));
     }
 
-    @GetMapping("/create")
-    public ResponseEntity<StudentResponse> create(@RequestBody StudentDTO studentDTO) {
+    @PostMapping("/create")
+    public ResponseEntity<StudentResponse> createStudent(@RequestBody final StudentDTO studentDTO) {
         return new ResponseEntity<>(studentService.createStudent(studentDTO), HttpStatus.CREATED);
     }
 
-    @GetMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) throws StudentNotFoundException {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteStudent(@PathVariable final Long id) throws StudentNotFoundException {
         studentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/update")
-    public ResponseEntity<StudentResponse> update(@RequestBody StudentDTO studentDTO) throws StudentNotFoundException {
-        return ResponseEntity.ok(studentService.updateStudent(studentDTO));
+    @PutMapping("/update/{id}")
+    public ResponseEntity<StudentResponse> updateStudent(@PathVariable final Long id, @RequestBody final StudentDTO studentDTO) throws StudentNotFoundException {
+        return ResponseEntity.ok(studentService.updateStudent(id, studentDTO));
     }
 
 
