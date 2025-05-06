@@ -11,7 +11,7 @@ import java.util.Locale;
 public class MessageUtil {
     private final MessageSource messageSource;
 
-    public String getMessage(String key, Locale locale) {
+    public String getMessage(final String key, final Locale locale) {
         return messageSource.getMessage(key, null, locale);
     }
 

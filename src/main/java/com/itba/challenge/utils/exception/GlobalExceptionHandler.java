@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.View;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -23,51 +24,52 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     private final MessageUtil messageUtil;
+    private final View error;
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handlerGenericException(HttpServletRequest req, Exception e) {
         String message = messageUtil.getMessage("error.generic", Locale.forLanguageTag("es"));
         ApiError apiError = ApiError.builder()
-                .backendMessage(e.getLocalizedMessage())
                 .message(message)
                 .url(req.getRequestURL().toString())
                 .date(LocalDateTime.now())
                 .method(req.getMethod())
                 .build();
 
-        log.error("{}: {}", message, e.getMessage(), e);
+        log.error("{}:", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handleNotFoundException(HttpServletRequest req, NotFoundException e) {
         ApiError apiError = ApiError.builder()
-                .backendMessage(e.getMessage())
                 .message(e.getUserMessage())
                 .url(req.getRequestURL().toString())
                 .date(LocalDateTime.now())
                 .method(req.getMethod())
                 .build();
 
-        log.error("{}: {}", e.getUserMessage(), e.getMessage());
+        log.error("{}:", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiError);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(HttpServletRequest req, MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleValidationExceptions(HttpServletRequest req, MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
 
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+        for (FieldError error : e.getBindingResult().getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
         }
 
+        log.error("Validation error: {}", errors);
+        log.error("{}:", e.getMessage(), e);
+
         ApiError apiError = ApiError.builder()
-                .message("Error de validación en los datos enviados.")
-                .backendMessage("Validation failed for one or more fields.")
+                .message(messageUtil.getMessage("error.validation", Locale.forLanguageTag("es")))
                 .url(req.getRequestURL().toString())
                 .date(LocalDateTime.now())
                 .method(req.getMethod())
-                .validationErrors(errors)  // ➔ necesitas agregar este campo al modelo ApiError
+                .validationErrors(errors)
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);

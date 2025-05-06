@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @Builder
-public record ApiError(String backendMessage,
+public record ApiError(
                        @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
                        LocalDateTime date,
                        String url,
