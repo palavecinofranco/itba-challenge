@@ -29,3 +29,7 @@ Ejemplos de uso (curl)
 
 ##### DELETE  
 `curl -X DELETE http://localhost:8080/api/students/delete/1`
+
+Para Swagger UI, acceder a:
+`http://localhost:8080/swagger-ui.html`
+
